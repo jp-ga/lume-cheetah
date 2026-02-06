@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from lume_cheetah.utils import access_cheetah_attribute
+
 
 class CheetahTransformer(ABC):
     """
@@ -66,22 +68,49 @@ class SLACCheetahTransformer(CheetahTransformer):
     to cheetah properties.
     """
 
-    def get_cheetah_property(self, simulator, control_name):
-        # Example implementation - this should be customized based on actual mappings
+    def get_cheetah_property(self, simulator, control_name, energy):
+        """
+        Get a property of a Cheetah element based on the control
+        variable name and return its value in EPICS units.
+
+        Parameters
+        ----------
+        simulator : CheetahSimulator
+            The simulator instance containing the segment and elements.
+        control_name : str
+            The name of the control variable (e.g. "QUAD:Q1:B1_GRAD")
+        energy : float
+            The beam energy in eV, used for unit conversions if necessary.
+        """
         cheetah_mapping = self.control_name_to_cheetah.get(control_name)
         if cheetah_mapping is None:
             raise ValueError(f"No mapping found for control variable '{control_name}'")
+
         element_name, attribute = cheetah_mapping.split()
         element = getattr(simulator.segment, element_name)
-        return getattr(element, attribute)
+        return access_cheetah_attribute(element, attribute, energy)
 
-    def set_cheetah_property(self, simulator, control_name, value):
-        # Example implementation - this should be customized based on actual mappings
+    def set_cheetah_property(self, simulator, control_name, value, energy):
+        """
+        Set a property of a Cheetah element based on the control variable
+        name and value in EPICS units.
+
+        Parameters
+        ----------
+        simulator : CheetahSimulator
+            The simulator instance containing the segment and elements.
+        control_name : str
+            The name of the control variable (e.g. "QUAD:Q1:B1_GRAD")
+        value : Any
+            The value to set for the corresponding cheetah property, in EPICS units.
+        energy : float
+            The beam energy in eV, used for unit conversions if necessary.
+        """
+
         cheetah_mapping = self.control_name_to_cheetah.get(control_name)
         if cheetah_mapping is None:
             raise ValueError(f"No mapping found for control variable '{control_name}'")
-        element_name, attribute = cheetah_mapping.split()
 
-        
+        element_name, attribute = cheetah_mapping.split()
         element = getattr(simulator.segment, element_name)
-        setattr(element, attribute, value)
+        access_cheetah_attribute(element, attribute, energy, set_value=value)

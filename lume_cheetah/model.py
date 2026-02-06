@@ -7,7 +7,6 @@ class LUMECheetahModel(LUMEModel):
     """
     LumeModel subclass for wrapping Cheetah Simulations
 
-
     Attributes
     ----------
     simulator : CheetahSimulator
