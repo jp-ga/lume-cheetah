@@ -1,4 +1,5 @@
 from lume.model import LUMEModel
+from lume.variable import Variable
 from lume_cheetah.simulator import CheetahSimulator
 from lume_cheetah.transformer import CheetahTransformer
 
@@ -16,10 +17,34 @@ class LUMECheetahModel(LUMEModel):
 
     """
 
-    def __init__(self, simulator: CheetahSimulator, transformer: CheetahTransformer):
+    def __init__(
+        self,
+        simulator: CheetahSimulator,
+        transformer: CheetahTransformer,
+        control_variables: dict[str, Variable],
+        observable_variables: dict[str, Variable],
+    ):
+        """
+        Initialize the LUMECheetahModel.
+
+        Parameters
+        ----------
+        simulator : CheetahSimulator
+            The CheetahSimulator instance used for simulating the accelerator behavior.
+        transformer : CheetahTransformer
+            The CheetahTransformer instance used for mapping between control variables and cheetah properties.
+        control_variables : dict[str, Variable]
+            A dictionary mapping control variable names to Variable instances.
+        observable_variables : dict[str, Variable]
+            A dictionary mapping observable (read-only) variable names to Variable instances.
+        """
+
         super().__init__()
         self.simulator = simulator
         self.transformer = transformer
+        self._control_variables = control_variables
+        self._observable_variables = observable_variables
+        self._variables = {**control_variables, **observable_variables}
         self._state = {}
 
         self._variables = self.simulator.get_supported_variables()
@@ -64,6 +89,42 @@ class LUMECheetahModel(LUMEModel):
         """
         # return the requested variables from the state
         return {var: self._state[var] for var in variable_names}
+
+    @property
+    def supported_variables(self) -> dict[str, Variable]:
+        """
+        Get a dictionary of all supported variables in the model.
+
+        Returns
+        -------
+        dict[str, Variable]
+            Dictionary mapping variable names to Variable instances
+        """
+        return self._variables
+
+    @property
+    def control_variables(self) -> dict[str, Variable]:
+        """
+        Get a dictionary of control (input) variables in the model.
+
+        Returns
+        -------
+        dict[str, Variable]
+            Dictionary mapping control variable names to Variable instances
+        """
+        return self._control_variables
+
+    @property
+    def observable_variables(self) -> dict[str, Variable]:
+        """
+        Get a dictionary of observable (read-only) variables in the model.
+
+        Returns
+        -------
+        dict[str, Variable]
+            Dictionary mapping observable variable names to Variable instances
+        """
+        return self._observable_variables
 
     def update_state(self):
         """
