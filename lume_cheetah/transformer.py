@@ -19,14 +19,6 @@ class CheetahTransformer(ABC):
         Example: {"QUAD:Q1:B1_GRAD": "Q1 k1"}
 
     """
-
-    def __init__(self, control_name_to_cheetah: dict[str, str]):
-        self._control_name_to_cheetah = control_name_to_cheetah
-
-    @property
-    def control_name_to_cheetah(self):
-        return self._control_name_to_cheetah
-
     @abstractmethod
     def get_cheetah_property(self, simulator, control_name):
         """
