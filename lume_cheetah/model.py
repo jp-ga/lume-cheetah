@@ -1,5 +1,5 @@
 from lume.model import LUMEModel
-from lume.variable import Variable
+from lume.variables import Variable
 from lume_cheetah.simulator import CheetahSimulator
 from lume_cheetah.transformer import CheetahTransformer
 
@@ -47,7 +47,8 @@ class LUMECheetahModel(LUMEModel):
         self._variables = {**control_variables, **observable_variables}
         self._state = {}
 
-        self._variables = self.simulator.get_supported_variables()
+        
+        self.update_state()
 
     def _set(self, values: dict):
         """
@@ -135,3 +136,10 @@ class LUMECheetahModel(LUMEModel):
             self._state[name] = self.transformer.get_cheetah_property(
                 self.simulator, name
             )
+
+    def reset(self):
+        """
+        Reset the model to its initial state by resetting the simulator and updating the state.
+        """
+        self.simulator.reset()
+        self.update_state()
