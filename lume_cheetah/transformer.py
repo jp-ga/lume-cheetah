@@ -12,12 +12,6 @@ class CheetahTransformer(ABC):
     any necessary unit conversions or special cases in the mapping
     between control variables and cheetah properties.
 
-    Attributes
-    ----------
-    control_name_to_cheetah: dict[str, str]
-        Mapping between control variable names and cheetah element names + attributes.
-        Example: {"QUAD:Q1:B1_GRAD": "Q1 k1"}
-
     """
     @abstractmethod
     def get_cheetah_property(self, simulator, control_name):
