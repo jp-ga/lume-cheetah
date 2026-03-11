@@ -57,7 +57,7 @@ namespaces = false
 virtual_accelerator = ["py.typed"]
 
 [tool.setuptools_scm]
-version_file = "lume_bmad/_version.py"
+version_file = "lume_cheetah/_version.py"
 
 [tool.ruff]
 # select = []
