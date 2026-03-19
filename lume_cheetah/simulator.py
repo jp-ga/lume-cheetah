@@ -11,8 +11,8 @@ class CheetahSimulator:
 
     This class provides an interface to simulate the behavior
     of a particle beam as it travels through a Cheetah accelerator segment.
-    It allows for tracking the beam, retrieving energy profiles,
-    and controlling the beam shutter state.
+    It allows for tracking the beam, retrieving energy profiles, and
+    controlling the beam shutter state.
 
     Attributes
     ----------
@@ -20,6 +20,9 @@ class CheetahSimulator:
         The Cheetah Segment representing the accelerator configuration.
     initial_beam_distribution : Beam
         The initial beam distribution to be tracked through the segment.
+    initial_beam_distribution_charge : torch.Tensor
+        A copy of the initial per-particle charges used to restore the beam
+        after toggling the shutter.
 
     Methods
     -------
@@ -31,8 +34,6 @@ class CheetahSimulator:
         Retrieves the energy of the beam at every element in the segment.
     set_shutter(value: bool)
         Sets the beam shutter state, controlling whether the beam is present or not.
-
-
     """
 
     def __init__(
@@ -49,11 +50,12 @@ class CheetahSimulator:
         ----------
         segment : Segment
             The Cheetah Segment representing the accelerator configuration.
-        initial_beam_distribution : Beam
+        initial_beam_distribution : Beam, optional
             The initial beam distribution to be tracked through the segment.
-        shutter_pv : str, optional
-            The process variable name for the beam shutter, if applicable.
-
+        initial_particle_group : ParticleGroup, optional
+            An openPMD beamphysics ParticleGroup that will be converted into a
+            Cheetah ParticleBeam. Must be provided if `initial_beam_distribution`
+            is not.
         """
 
         self.segment = segment
