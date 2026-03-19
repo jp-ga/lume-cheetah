@@ -2,7 +2,8 @@ import torch
 from copy import deepcopy
 from cheetah.accelerator import Segment
 from cheetah.particles import Beam, ParticleBeam
-
+from beamphysics import ParticleGroup
+from lume_cheetah.utils import particlegroup_to_cheetah_beam
 
 class CheetahSimulator:
     """
@@ -35,9 +36,11 @@ class CheetahSimulator:
     """
 
     def __init__(
-        self,
+        self, *,
         segment: Segment,
-        initial_beam_distribution: Beam,
+        initial_beam_distribution: Beam | None = None,
+        initial_particle_group: ParticleGroup | None = None
+
     ) -> None:
         """
         Simulator class for Cheetah accelerator simulations.
@@ -55,11 +58,19 @@ class CheetahSimulator:
 
         self.segment = segment
         self._initial_segment = deepcopy(segment)
-        self.initial_beam_distribution = initial_beam_distribution.clone()
+
+
+        if initial_beam_distribution and not initial_particle_group:
+            self.initial_beam_distribution = initial_beam_distribution.clone()
+        elif initial_particle_group and not initial_beam_distribution:
+            self.initial_beam_distribution = particlegroup_to_cheetah_beam(
+            initial_particle_group)
+        else:
+            raise ValueError("""Must provide either initial_beam_distribution"""
+            """or initial_particle_group.""")
+        
+
         self.beam_distribution = self.initial_beam_distribution.clone()
-        self.initial_beam_distribution_charge = (
-            initial_beam_distribution.particle_charges
-        )
 
         self.track()
         self.energies = self.get_energy()
