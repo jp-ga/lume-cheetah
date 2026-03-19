@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 
-from lume_cheetah.utils import access_cheetah_attribute
-
 
 class CheetahTransformer(ABC):
     """
