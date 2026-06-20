@@ -2,9 +2,10 @@ from lume.model import LUMEModel
 from lume.variables import Variable
 from lume_cheetah.simulator import CheetahSimulator
 from lume_cheetah.transformer import CheetahTransformer
+import torch
 
 
-class LUMECheetahModel(LUMEModel):
+class LUMECheetahModel(LUMEModel, torch.nn.Module):
     """
     LumeModel subclass for wrapping Cheetah Simulations
 
@@ -38,8 +39,7 @@ class LUMECheetahModel(LUMEModel):
         observable_variables : dict[str, Variable]
             A dictionary mapping observable (read-only) variable names to Variable instances.
         """
-
-        super().__init__()
+        torch.nn.Module.__init__(self)
         self.simulator = simulator
         self.transformer = transformer
         self._control_variables = control_variables
