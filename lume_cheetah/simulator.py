@@ -5,7 +5,7 @@ from cheetah.particles import Beam, ParticleBeam
 from beamphysics import ParticleGroup
 from lume_cheetah.utils import particlegroup_to_cheetah_beam
 
-class CheetahSimulator:
+class CheetahSimulator(torch.nn.Module):
     """
     Simulator class for Cheetah accelerator simulations.
 
@@ -57,6 +57,7 @@ class CheetahSimulator:
             Cheetah ParticleBeam. Must be provided if `initial_beam_distribution`
             is not.
         """
+        super().__init__()
 
         self.segment = segment
         self._initial_segment = deepcopy(segment)
